@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:news_app_4_clean_architecture_bloc/core/router/app_routes.dart';
 import 'package:news_app_4_clean_architecture_bloc/features/feature_home/domain/entities/get_news_entity.dart';
 
 class NewsCard extends StatelessWidget {
@@ -18,7 +20,7 @@ class NewsCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
-          // Navigate to details if needed
+          context.push(AppRoutes.newsDetails, extra: article);
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

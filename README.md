@@ -9,23 +9,28 @@ A professional news application built with Flutter, demonstrating industry-stand
 
 ## Screenshots
 
-| News Search & Feed 
-|:---:|
-| <img src="Screenshot_1780648172.png" width="300">
+| News Search & Feed | News Details & Web View |
+|:---:|:---:|
+| <img src="Screenshot_1780648172.png" width="300"> | <img src="news_details_page.png" width="300"> |
 
 ## Features
 
 ### News Module (`feature_home`)
 - **Live News Search**: Query news articles based on keywords.
 - **Dynamic News Feed**: Display headlines with images, descriptions, and source information.
-- **Infinite Scrolling**: (Internal logic supports extension, current implementation focuses on fetch-by-query).
 - **Graceful Error Handling**: Specialized UI states for network issues and server errors.
+
+### News Details Module (`feature_news_details`)
+- **Collapsing Sliver Header**: Display the article's cover photo with smooth parallax scaling and gradient shading.
+- **Pinch-to-Zoom Fullscreen Viewer**: Tapping on the cover image opens an interactive fullscreen page with pinch-to-zoom and double-tap zoom capabilities.
+- **Native Share Integration**: Instantly share the article URL and headline using system-native share sheets.
+- **In-App Web View**: View full-text original articles in a dedicated Web View featuring loading progress and custom browser navigation controls.
 
 ## Tech Stack
 
 - **Framework**: Flutter
 - **Language**: Dart
-- **State Management**: BLoC / Cubit
+- **State Management**: BLoC
 - **Networking**: Dio (Interceptor-ready)
 - **Dependency Injection**: GetIt
 - **Functional Programming**: Dartz (Either type for error handling)
@@ -39,20 +44,20 @@ The project is divided into three main layers, following the Clean Architecture 
 
 ### 1. Domain Layer
 The core of the application, containing business logic and high-level abstractions. It is independent of any other layer.
-- **Entities**: Simple POJOs (Plain Old Java Objects) using `Equatable`.
-- **UseCases**: Specific business actions (e.g., `GetNewsUseCase`).
+- **Entities**: Simple POJs using `Equatable` (e.g., `GetNewsEntity`, `NewsDetailEntity`).
+- **UseCases**: Specific business actions (e.g., `GetNewsUseCase`, `ShareNewsUseCase`).
 - **Repositories**: Abstract contracts defining the interface for data operations.
 
 ### 2. Data Layer
 Responsible for data retrieval and mapping.
 - **Models**: Data transfer objects (DTOs) with `fromJson` and `toJson` logic, extending Entities.
 - **DataSources**: Remote (API) and Local (currently not implemented) data providers.
-- **Repositories Implementation**: Concrete implementation of Domain Repository contracts.
+- **Repositories Implementation**: Concrete implementation of Domain Repository contracts (e.g., `GetNewsRepositoryImpl`, `NewsDetailsRepositoryImpl`).
 
 ### 3. Presentation Layer
 Handles the UI and user interactions.
-- **BLoCs**: Manages UI state based on events.
-- **Pages/Widgets**: Pure UI components that react to BLoC states.
+- **BLoCs**: Manages UI state based on events (e.g., `HomeBloc`, `NewsDetailsBloc`).
+- **Pages/Widgets**: Pure UI components that react to BLoC states (e.g., `HomePage`, `NewsDetailsPage`, `FullscreenImageViewer`, `NewsWebViewPage`).
 
 ## Clean Architecture Structure
 
@@ -60,6 +65,7 @@ Handles the UI and user interactions.
 lib/
 ├── core/
 │   ├── error/          # Failure abstractions
+│   ├── router/         # GoRouter path definitions
 │   └── utils/          # Constants and Base UseCase
 ├── features/
 │   ├── feature_home/
@@ -75,6 +81,17 @@ lib/
 │   │       ├── bloc/
 │   │       ├── pages/
 │   │       └── widgets/
+│   └── feature_news_details/
+│       ├── data/
+│       │   └── repositories/
+│       ├── domain/
+│       │   ├── entities/
+│       │   ├── repositories/
+│       │   └── usecases/
+│       └── presentation/
+│           ├── bloc/
+│           ├── pages/
+│           └── widgets/
 ├── di.dart             # Dependency Injection Setup
 └── main.dart           # Entry point
 ```
@@ -83,12 +100,13 @@ lib/
 
 The application uses **BLoC** to maintain a strict separation between UI and business logic. 
 
-**Event Flow Example:**
-1. UI adds `LoadNewsEvent("flutter")` to `HomeBloc`.
-2. `HomeBloc` emits `LoadingNewsStatus`.
-3. `HomeBloc` calls `GetNewsUseCase`.
-4. `HomeBloc` receives `Either<Failure, GetNewsEntity>`.
-5. `HomeBloc` emits `GetNewsCompletedStatus` (Success) or `ErrorOnGettingNewsStatus` (Failure).
+**Event Flow Example (Sharing):**
+1. UI adds `ShareArticleEvent(url, title)` to `NewsDetailsBloc`.
+2. `NewsDetailsBloc` emits `ShareLoadingStatus`.
+3. `NewsDetailsBloc` calls `ShareNewsUseCase`.
+4. Usecase triggers `NewsDetailsRepository` implementation, which interacts with `SharePlus` platform.
+5. `NewsDetailsBloc` receives `Either<Failure, void>`.
+6. `NewsDetailsBloc` emits `ShareSuccessStatus` or `ShareErrorStatus` to update SnackBar notifications in the UI.
 
 ## Dependency Injection
 
@@ -99,9 +117,15 @@ Dependencies are managed using **GetIt**. This ensures that the codebase remains
 final di = GetIt.instance;
 
 Future<void> setup() async {
+  // Home
   di.registerSingleton<GetNewsRequest>(GetNewsRequest(dio: Dio()));
   di.registerSingleton<GetNewsRepository>(GetNewsRepositoryImpl(getNewsRequest: di()));
   di.registerFactory<HomeBloc>(() => HomeBloc(getNewsUseCase: di()));
+
+  // News Details
+  di.registerSingleton<NewsDetailsRepository>(NewsDetailsRepositoryImpl());
+  di.registerSingleton<ShareNewsUseCase>(ShareNewsUseCase(repository: di()));
+  di.registerFactory<NewsDetailsBloc>(() => NewsDetailsBloc(shareNewsUseCase: di()));
 }
 ```
 
@@ -114,13 +138,13 @@ The app uses a functional approach to error handling with the `Dartz` package. I
 
 ## Testing
 
-The project emphasizes testability with a healthy suite of unit tests.
+The project emphasizes testability with a healthy suite of unit tests across **every layer** of **every feature**.
 
 - **Unit Tests**: Logic testing for UseCases and Entities.
-- **Repository Tests**: Verifies data mapping and error conversion.
+- **Repository Tests**: Verifies data mapping, error conversion, and platform-channel abstraction tests using custom platform overrides.
 - **DataSource Tests**: Validates API request construction and `Dio` integration.
 - **BLoC Tests**: Uses `bloc_test` to verify state emission sequences.
-- **Mocking**: Utilizes `Mockito` for isolating dependencies.
+- **Mocking**: Utilizes `Mockito` and platform mocks for isolating dependencies.
 
 To run tests:
 ```bash
@@ -137,13 +161,15 @@ flutter test
 | `dartz` | Functional Programming (Error Handling) |
 | `equatable` | Value Equality Comparison |
 | `go_router` | Declarative Routing |
+| `share_plus` | Platform-native content sharing |
+| `webview_flutter` | Embedded browser view support |
 | `bloc_test` | BLoC Unit Testing |
 | `mockito` | Mocking framework |
 
 ## Getting Started
 
 ### Prerequisites
-- Flutter SDK: `^3.38.5`
+- Flutter SDK: `^3.38.5` (or compatible versions matching sdk constraint)
 - An API Key from [NewsAPI.org](https://newsapi.org/)
 
 ### Installation
