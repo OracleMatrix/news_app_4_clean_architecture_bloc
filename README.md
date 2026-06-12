@@ -26,6 +26,11 @@ A professional news application built with Flutter, demonstrating industry-stand
 - **Native Share Integration**: Instantly share the article URL and headline using system-native share sheets.
 - **In-App Web View**: View full-text original articles in a dedicated Web View featuring loading progress and custom browser navigation controls.
 
+### Bookmarked News Module (`feature_bookmarked_news`)
+- **Offline Bookmarks**: Save favorite news articles for offline access using fast, synchronous local storage (`GetStorage`).
+- **Bookmark Management**: Add or remove articles from the bookmark list seamlessly from the news details page.
+- **Dedicated Bookmark Page**: View all saved articles in a dedicated, easily accessible page.
+
 ## Tech Stack
 
 - **Framework**: Flutter
@@ -68,6 +73,10 @@ lib/
 │   ├── router/         # GoRouter path definitions
 │   └── utils/          # Constants and Base UseCase
 ├── features/
+│   ├── feature_bookmarked_news/
+│   │   ├── data/
+│   │   ├── domain/
+│   │   └── presentation/
 │   ├── feature_home/
 │   │   ├── data/
 │   │   │   ├── data_source/
@@ -163,6 +172,7 @@ flutter test
 | `go_router` | Declarative Routing |
 | `share_plus` | Platform-native content sharing |
 | `webview_flutter` | Embedded browser view support |
+| `get_storage` | Lightweight, fast local storage for offline bookmarks |
 | `bloc_test` | BLoC Unit Testing |
 | `mockito` | Mocking framework |
 
