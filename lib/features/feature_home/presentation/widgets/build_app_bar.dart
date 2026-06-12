@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:news_app_4_clean_architecture_bloc/core/router/app_routes.dart';
 import 'package:news_app_4_clean_architecture_bloc/features/feature_home/presentation/widgets/build_search_field.dart';
 
 Widget buildAppBar(
@@ -19,12 +21,25 @@ Widget buildAppBar(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 10),
-            Text(
-              'Global News',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Global News',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                IconButton(
+                  tooltip: 'Bookmarked News',
+                  onPressed: () => context.push(AppRoutes.bookmarkedNews),
+                  icon: Icon(
+                    Icons.bookmark_border_rounded,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             buildSearchField(queryController, context),
