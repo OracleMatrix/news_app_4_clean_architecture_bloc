@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:news_app_4_clean_architecture_bloc/core/router/app_routes.dart';
 import 'package:news_app_4_clean_architecture_bloc/di.dart';
+import 'package:news_app_4_clean_architecture_bloc/features/feature_bookmarked_news/domain/entity/bookmarked_news_entity.dart';
+import 'package:news_app_4_clean_architecture_bloc/features/feature_bookmarked_news/presentation/bloc/book_marked_news_bloc.dart';
 import 'package:news_app_4_clean_architecture_bloc/features/feature_home/domain/entities/get_news_entity.dart';
 import 'package:news_app_4_clean_architecture_bloc/features/feature_news_details/domain/entities/news_detail_entity.dart';
 import 'package:news_app_4_clean_architecture_bloc/features/feature_news_details/presentation/bloc/news_details_bloc.dart';
@@ -51,7 +53,8 @@ class NewsDetailsPage extends StatelessWidget {
                 ),
               );
           } else if (state.shareStatus is ShareErrorStatus) {
-            final errorMsg = (state.shareStatus as ShareErrorStatus).errorMessage;
+            final errorMsg =
+                (state.shareStatus as ShareErrorStatus).errorMessage;
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
@@ -106,9 +109,8 @@ class NewsDetailsPage extends StatelessWidget {
             if (hasImage) {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => FullscreenImageViewer(
-                    imageUrl: news.urlToImage,
-                  ),
+                  builder: (context) =>
+                      FullscreenImageViewer(imageUrl: news.urlToImage),
                 ),
               );
             }
@@ -123,7 +125,9 @@ class NewsDetailsPage extends StatelessWidget {
                     imageUrl: news.urlToImage,
                     fit: BoxFit.cover,
                     placeholder: (context, url) => Container(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
                       child: Center(
                         child: LoadingAnimationWidget.staggeredDotsWave(
                           color: Theme.of(context).colorScheme.primary,
@@ -132,7 +136,9 @@ class NewsDetailsPage extends StatelessWidget {
                       ),
                     ),
                     errorWidget: (context, url, error) => Container(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
                       child: const Icon(Icons.broken_image, size: 50),
                     ),
                   ),
@@ -166,7 +172,10 @@ class NewsDetailsPage extends StatelessWidget {
                   right: 16,
                   bottom: 16,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black54,
                       borderRadius: BorderRadius.circular(12),
@@ -222,10 +231,12 @@ class NewsDetailsPage extends StatelessWidget {
                       child: Text(
                         news.sourceName.toUpperCase(),
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimaryContainer,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 0.5,
-                            ),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onPrimaryContainer,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.5,
+                        ),
                       ),
                     ),
                     const Spacer(),
@@ -238,9 +249,9 @@ class NewsDetailsPage extends StatelessWidget {
                     Text(
                       _formatDate(news.publishedAt),
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.outline,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        color: Theme.of(context).colorScheme.outline,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
@@ -249,9 +260,9 @@ class NewsDetailsPage extends StatelessWidget {
                 Text(
                   news.title,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        height: 1.25,
-                      ),
+                    fontWeight: FontWeight.w800,
+                    height: 1.25,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 // Author row
@@ -259,10 +270,14 @@ class NewsDetailsPage extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 18,
-                      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.secondaryContainer,
                       child: Icon(
                         Icons.person,
-                        color: Theme.of(context).colorScheme.onSecondaryContainer,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSecondaryContainer,
                         size: 20,
                       ),
                     ),
@@ -273,15 +288,15 @@ class NewsDetailsPage extends StatelessWidget {
                         children: [
                           Text(
                             news.author,
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            style: Theme.of(context).textTheme.titleSmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
                             "Author",
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
                                   color: Theme.of(context).colorScheme.outline,
                                 ),
                           ),
@@ -298,11 +313,11 @@ class NewsDetailsPage extends StatelessWidget {
                   Text(
                     news.description,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w600,
-                          height: 1.6,
-                          fontStyle: FontStyle.italic,
-                        ),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                      height: 1.6,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                   const SizedBox(height: 24),
                 ],
@@ -310,10 +325,10 @@ class NewsDetailsPage extends StatelessWidget {
                 Text(
                   _cleanContent(news.content),
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        height: 1.7,
-                        letterSpacing: 0.2,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+                    height: 1.7,
+                    letterSpacing: 0.2,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
                 const SizedBox(height: 30),
               ],
@@ -353,7 +368,9 @@ class NewsDetailsPage extends StatelessWidget {
                   color: Theme.of(blocContext).colorScheme.surfaceContainerHigh,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Theme.of(blocContext).colorScheme.outline.withAlpha(40),
+                    color: Theme.of(
+                      blocContext,
+                    ).colorScheme.outline.withAlpha(40),
                   ),
                 ),
                 child: IconButton(
@@ -363,12 +380,9 @@ class NewsDetailsPage extends StatelessWidget {
                   ),
                   tooltip: 'Share News',
                   onPressed: () {
-                    BlocProvider.of<NewsDetailsBloc>(blocContext).add(
-                      ShareArticleEvent(
-                        url: news.url,
-                        title: news.title,
-                      ),
-                    );
+                    BlocProvider.of<NewsDetailsBloc>(
+                      blocContext,
+                    ).add(ShareArticleEvent(url: news.url, title: news.title));
                   },
                 ),
               );
@@ -384,15 +398,14 @@ class NewsDetailsPage extends StatelessWidget {
                   if (news.url.isNotEmpty) {
                     context.push(
                       AppRoutes.webView,
-                      extra: {
-                        'url': news.url,
-                        'title': news.sourceName,
-                      },
+                      extra: {'url': news.url, 'title': news.sourceName},
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text("No URL link available for this article."),
+                        content: Text(
+                          "No URL link available for this article.",
+                        ),
                         backgroundColor: Colors.orange,
                       ),
                     );
@@ -414,6 +427,8 @@ class NewsDetailsPage extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(width: 12),
+          BookmarkIconButton(article: article),
         ],
       ),
     );
@@ -435,7 +450,7 @@ class NewsDetailsPage extends StatelessWidget {
         'Sep',
         'Oct',
         'Nov',
-        'Dec'
+        'Dec',
       ];
       return '${months[date.month - 1]} ${date.day}, ${date.year}';
     } catch (e) {
@@ -450,5 +465,75 @@ class NewsDetailsPage extends StatelessWidget {
       return content.substring(0, index);
     }
     return content;
+  }
+}
+
+class BookmarkIconButton extends StatelessWidget {
+  const BookmarkIconButton({super.key, required this.article});
+
+  final ArticleEntity article;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) =>
+          di<BookMarkedNewsBloc>()
+            ..add(CheckIsNewsBookmarkedEvent(url: article.url ?? '')),
+      child: BlocBuilder<BookMarkedNewsBloc, BookMarkedNewsState>(
+        builder: (context, state) {
+          if (state.submitRequest == BookMarkNewsStatus.loading) {
+            return const CircularProgressIndicator();
+          }
+          return Container(
+            height: 52,
+            width: 52,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline.withAlpha(40),
+              ),
+            ),
+            child: IconButton(
+              tooltip: (state.isBookmarked ?? false)
+                  ? 'Remove from bookmarks'
+                  : 'Add to bookmarks',
+              onPressed: () {
+                if (state.isBookmarked ?? false) {
+                  context.read<BookMarkedNewsBloc>().add(
+                    RemoveBookmarkedNewsEvent(url: article.url ?? ''),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Article removed from bookmarks."),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } else {
+                  context.read<BookMarkedNewsBloc>().add(
+                    AddBookmarkedNewsEvent(
+                      bookMarkedNewsEntity:
+                          BookMarkedNewsEntity.fromArticleEntity(article),
+                    ),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Article added to bookmarks."),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              },
+              icon: Icon(
+                (state.isBookmarked ?? false)
+                    ? Icons.bookmark_added
+                    : Icons.bookmark_add_outlined,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
