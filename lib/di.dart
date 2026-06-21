@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:news_app_4_clean_architecture_bloc/core/network/dio_client.dart';
 import 'package:news_app_4_clean_architecture_bloc/features/feature_bookmarked_news/data/data_source/get_bookmarked_news_local_source.dart';
 import 'package:news_app_4_clean_architecture_bloc/features/feature_bookmarked_news/data/repository/bookmarked_news_repository_impl.dart';
 import 'package:news_app_4_clean_architecture_bloc/features/feature_bookmarked_news/domain/repository/bookmarked_news_repository.dart';
@@ -22,7 +23,9 @@ import 'package:news_app_4_clean_architecture_bloc/features/feature_news_details
 final GetIt di = GetIt.instance;
 
 Future setup() async {
-  di.registerSingleton<GetNewsRequest>(GetNewsRequest(dio: Dio()));
+  di.registerSingleton<DioClient>(DioClient());
+  di.registerSingleton<Dio>(di<DioClient>().dio);
+  di.registerSingleton<GetNewsRequest>(GetNewsRequest(dio: di()));
 
   di.registerSingleton<GetNewsRepository>(
     GetNewsRepositoryImpl(getNewsRequest: di()),
