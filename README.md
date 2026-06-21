@@ -9,14 +9,18 @@ A professional news application built with Flutter, demonstrating industry-stand
 
 ## Screenshots
 
-| News Search & Feed | News Details & Web View |
+| Home Screen | Sort & Filter | News Details |
+|:---:|:---:|:---:|
+| <img src="home_page.png" width="240"> | <img src="home_page_choose_sortBy.png" width="240"> | <img src="news_detailes_page.png" width="240"> |
+
+| Offline Bookmarks | Empty Bookmarks |
 |:---:|:---:|
-| <img src="Screenshot_1780648172.png" width="300"> | <img src="news_details_page.png" width="300"> |
+| <img src="bookmarkeds_page.png" width="240"> | <img src="empty_bookedmarked_page.png" width="240"> |
 
 ## Features
 
 ### News Module (`feature_home`)
-- **Live News Search & Filtering**: Query news articles based on keywords, categories (technology, business, sports, etc.), and sorting criteria (popularity, publishedAt, relevancy).
+- **Live News Search & Filtering**: Query news articles based on keywords, categories (technology, business, sports, etc.), and sorting criteria (popularity, publishedAt, relevancy) via a dynamic bottom sheet selector.
 - **Dynamic News Feed**: Display headlines with images, descriptions, and source information.
 - **Graceful Error Handling**: Specialized UI states for network issues and server errors.
 
