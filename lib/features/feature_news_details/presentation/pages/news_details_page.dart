@@ -25,7 +25,7 @@ class NewsDetailsPage extends StatelessWidget {
       create: (context) => di<NewsDetailsBloc>(),
       child: BlocListener<NewsDetailsBloc, NewsDetailsState>(
         listener: (context, state) {
-          if (state.shareStatus is ShareLoadingStatus) {
+          if (state.shareStatus == ShareStatus.loading) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
@@ -43,7 +43,7 @@ class NewsDetailsPage extends StatelessWidget {
                   duration: const Duration(seconds: 1),
                 ),
               );
-          } else if (state.shareStatus is ShareSuccessStatus) {
+          } else if (state.shareStatus == ShareStatus.success) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
@@ -52,9 +52,8 @@ class NewsDetailsPage extends StatelessWidget {
                   backgroundColor: Colors.green,
                 ),
               );
-          } else if (state.shareStatus is ShareErrorStatus) {
-            final errorMsg =
-                (state.shareStatus as ShareErrorStatus).errorMessage;
+          } else if (state.shareStatus == ShareStatus.error) {
+            final errorMsg = state.errorMessage ?? '';
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(

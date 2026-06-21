@@ -30,33 +30,33 @@ void main() {
     newsDetailsBloc.close();
   });
 
-  test('initial state should be ShareInitialStatus', () {
-    expect(newsDetailsBloc.state.shareStatus, isA<ShareInitialStatus>());
+  test('initial state should be ShareStatus.initial', () {
+    expect(newsDetailsBloc.state.shareStatus, ShareStatus.initial);
   });
 
   blocTest<NewsDetailsBloc, NewsDetailsState>(
-    'should emit [ShareLoadingStatus, ShareSuccessStatus] when shareNews is successful',
+    'should emit [ShareStatus.loading, ShareStatus.success] when shareNews is successful',
     build: () {
       stubRepository.result = const Right(null);
       return newsDetailsBloc;
     },
     act: (bloc) => bloc.add(const ShareArticleEvent(url: 'url', title: 'title')),
     expect: () => [
-      NewsDetailsState(shareStatus: ShareLoadingStatus()),
-      NewsDetailsState(shareStatus: ShareSuccessStatus()),
+      const NewsDetailsState(shareStatus: ShareStatus.loading),
+      const NewsDetailsState(shareStatus: ShareStatus.success),
     ],
   );
 
   blocTest<NewsDetailsBloc, NewsDetailsState>(
-    'should emit [ShareLoadingStatus, ShareErrorStatus] when shareNews fails',
+    'should emit [ShareStatus.loading, ShareStatus.error] when shareNews fails',
     build: () {
       stubRepository.result = const Left(UnknownFailure('error'));
       return newsDetailsBloc;
     },
     act: (bloc) => bloc.add(const ShareArticleEvent(url: 'url', title: 'title')),
     expect: () => [
-      NewsDetailsState(shareStatus: ShareLoadingStatus()),
-      NewsDetailsState(shareStatus: ShareErrorStatus('error')),
+      const NewsDetailsState(shareStatus: ShareStatus.loading),
+      const NewsDetailsState(shareStatus: ShareStatus.error, errorMessage: 'error'),
     ],
   );
 }

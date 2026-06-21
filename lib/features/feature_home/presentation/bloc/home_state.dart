@@ -29,49 +29,41 @@ class HomeState extends Equatable {
   final GetNewsStatus getNewsStatus;
   final Category selectedCategory;
   final FilterNewsStatus selectedFilter;
+  final GetNewsEntity? getNewsEntity;
+  final String? errorMessage;
+
   const HomeState({
     required this.getNewsStatus,
     required this.selectedCategory,
     required this.selectedFilter,
+    this.getNewsEntity,
+    this.errorMessage,
   });
 
   HomeState copyWith({
     GetNewsStatus? getNewsStatus,
     Category? selectedCategory,
     FilterNewsStatus? selectedFilter,
+    GetNewsEntity? getNewsEntity,
+    String? errorMessage,
   }) {
     return HomeState(
       getNewsStatus: getNewsStatus ?? this.getNewsStatus,
       selectedCategory: selectedCategory ?? this.selectedCategory,
       selectedFilter: selectedFilter ?? this.selectedFilter,
+      getNewsEntity: getNewsEntity ?? this.getNewsEntity,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
   @override
-  List<Object?> get props => [getNewsStatus, selectedCategory, selectedFilter];
+  List<Object?> get props => [
+        getNewsStatus,
+        selectedCategory,
+        selectedFilter,
+        getNewsEntity,
+        errorMessage,
+      ];
 }
 
-abstract class GetNewsStatus extends Equatable {}
-
-class LoadingNewsStatus extends GetNewsStatus {
-  @override
-  List<Object?> get props => [];
-}
-
-class ErrorOnGettingNewsStatus extends GetNewsStatus {
-  final String message;
-
-  ErrorOnGettingNewsStatus(this.message);
-
-  @override
-  List<Object?> get props => [message];
-}
-
-class GetNewsCompletedStatus extends GetNewsStatus {
-  final GetNewsEntity getNewsEntity;
-
-  GetNewsCompletedStatus(this.getNewsEntity);
-
-  @override
-  List<Object?> get props => [getNewsEntity];
-}
+enum GetNewsStatus { loading, completed, error }

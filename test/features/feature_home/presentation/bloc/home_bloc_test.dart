@@ -42,14 +42,14 @@ void main() {
   );
 
   group('HomeBloc', () {
-    test('initial state should be LoadingNewsStatus', () {
-      expect(homeBloc.state.getNewsStatus, isA<LoadingNewsStatus>());
+    test('initial state should be GetNewsStatus.loading', () {
+      expect(homeBloc.state.getNewsStatus, GetNewsStatus.loading);
       expect(homeBloc.state.selectedCategory, Category.technology);
       expect(homeBloc.state.selectedFilter, FilterNewsStatus.popularity);
     });
 
     blocTest<HomeBloc, HomeState>(
-      'should emit [GetNewsCompletedStatus] when success',
+      'should emit [GetNewsStatus.completed] when success',
       build: () {
         when(
           mockGetNewsByFilterUsecase(any),
@@ -58,13 +58,14 @@ void main() {
       },
       act: (bloc) => bloc.add(LoadNewsEvent(query: tQuery, filterNewsStatus: FilterNewsStatus.popularity)),
       expect: () => [
-        HomeState(
-          getNewsStatus: LoadingNewsStatus(),
+        const HomeState(
+          getNewsStatus: GetNewsStatus.loading,
           selectedCategory: Category.technology,
           selectedFilter: FilterNewsStatus.popularity,
         ),
-        HomeState(
-          getNewsStatus: GetNewsCompletedStatus(tNewsEntity),
+        const HomeState(
+          getNewsStatus: GetNewsStatus.completed,
+          getNewsEntity: tNewsEntity,
           selectedCategory: Category.technology,
           selectedFilter: FilterNewsStatus.popularity,
         ),
@@ -75,7 +76,7 @@ void main() {
     );
 
     blocTest<HomeBloc, HomeState>(
-      'should emit [ErrorOnGettingNewsStatus] when failure',
+      'should emit [GetNewsStatus.error] when failure',
       build: () {
         when(
           mockGetNewsByFilterUsecase(any),
@@ -84,13 +85,14 @@ void main() {
       },
       act: (bloc) => bloc.add(LoadNewsEvent(query: tQuery, filterNewsStatus: FilterNewsStatus.popularity)),
       expect: () => [
-        HomeState(
-          getNewsStatus: LoadingNewsStatus(),
+        const HomeState(
+          getNewsStatus: GetNewsStatus.loading,
           selectedCategory: Category.technology,
           selectedFilter: FilterNewsStatus.popularity,
         ),
-        HomeState(
-          getNewsStatus: ErrorOnGettingNewsStatus('error'),
+        const HomeState(
+          getNewsStatus: GetNewsStatus.error,
+          errorMessage: 'error',
           selectedCategory: Category.technology,
           selectedFilter: FilterNewsStatus.popularity,
         ),

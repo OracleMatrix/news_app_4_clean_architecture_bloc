@@ -7,7 +7,7 @@ import 'package:news_app_4_clean_architecture_bloc/features/feature_home/present
 Widget buildNewsContent(TextEditingController queryController) {
   return BlocBuilder<HomeBloc, HomeState>(
     builder: (context, state) {
-      if (state.getNewsStatus is LoadingNewsStatus) {
+      if (state.getNewsStatus == GetNewsStatus.loading) {
         return SliverFillRemaining(
           child: Center(
             child: LoadingAnimationWidget.staggeredDotsWave(
@@ -18,8 +18,7 @@ Widget buildNewsContent(TextEditingController queryController) {
         );
       }
 
-      if (state.getNewsStatus is ErrorOnGettingNewsStatus) {
-        final errorStatus = state.getNewsStatus as ErrorOnGettingNewsStatus;
+      if (state.getNewsStatus == GetNewsStatus.error) {
         return SliverFillRemaining(
           child: Center(
             child: Column(
@@ -28,7 +27,7 @@ Widget buildNewsContent(TextEditingController queryController) {
                 const Icon(Icons.error_outline, size: 60, color: Colors.red),
                 const SizedBox(height: 16),
                 Text(
-                  errorStatus.message,
+                  state.errorMessage ?? '',
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 16),
                 ),
@@ -52,10 +51,8 @@ Widget buildNewsContent(TextEditingController queryController) {
         );
       }
 
-      if (state.getNewsStatus is GetNewsCompletedStatus) {
-        final getNewsCompletedStatus =
-            state.getNewsStatus as GetNewsCompletedStatus;
-        final articles = getNewsCompletedStatus.getNewsEntity.articles ?? [];
+      if (state.getNewsStatus == GetNewsStatus.completed) {
+        final articles = state.getNewsEntity?.articles ?? [];
 
         if (articles.isEmpty) {
           return const SliverFillRemaining(

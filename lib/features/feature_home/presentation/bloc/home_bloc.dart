@@ -12,8 +12,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   HomeBloc({required this.getNewsByFilterUsecase})
     : super(
-        HomeState(
-          getNewsStatus: LoadingNewsStatus(),
+        const HomeState(
+          getNewsStatus: GetNewsStatus.loading,
           selectedCategory: Category.technology,
           selectedFilter: FilterNewsStatus.popularity,
         ),
@@ -24,7 +24,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Future<void> _loadNews(LoadNewsEvent event, Emitter<HomeState> emit) async {
-    emit(state.copyWith(getNewsStatus: LoadingNewsStatus()));
+    emit(state.copyWith(getNewsStatus: GetNewsStatus.loading));
 
     final result = await getNewsByFilterUsecase(
       FilterParams(
@@ -35,9 +35,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     result.fold(
       (l) => emit(
-        state.copyWith(getNewsStatus: ErrorOnGettingNewsStatus(l.message)),
+        state.copyWith(
+          getNewsStatus: GetNewsStatus.error,
+          errorMessage: l.message,
+        ),
       ),
-      (r) => emit(state.copyWith(getNewsStatus: GetNewsCompletedStatus(r))),
+      (r) => emit(
+        state.copyWith(
+          getNewsStatus: GetNewsStatus.completed,
+          getNewsEntity: r,
+        ),
+      ),
     );
   }
 
@@ -47,7 +55,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     emit(
       state.copyWith(
-        getNewsStatus: LoadingNewsStatus(),
+        getNewsStatus: GetNewsStatus.loading,
         selectedCategory: event.category,
       ),
     );
@@ -61,9 +69,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     result.fold(
       (l) => emit(
-        state.copyWith(getNewsStatus: ErrorOnGettingNewsStatus(l.message)),
+        state.copyWith(
+          getNewsStatus: GetNewsStatus.error,
+          errorMessage: l.message,
+        ),
       ),
-      (r) => emit(state.copyWith(getNewsStatus: GetNewsCompletedStatus(r))),
+      (r) => emit(
+        state.copyWith(
+          getNewsStatus: GetNewsStatus.completed,
+          getNewsEntity: r,
+        ),
+      ),
     );
   }
 
@@ -71,7 +87,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     FilterNewsEvent event,
     Emitter<HomeState> emit,
   ) async {
-    emit(state.copyWith(getNewsStatus: LoadingNewsStatus()));
+    emit(state.copyWith(getNewsStatus: GetNewsStatus.loading));
 
     final result = await getNewsByFilterUsecase(
       FilterParams(
@@ -82,14 +98,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     result.fold(
       (l) => emit(
-        state.copyWith(getNewsStatus: ErrorOnGettingNewsStatus(l.message)),
+        state.copyWith(
+          getNewsStatus: GetNewsStatus.error,
+          errorMessage: l.message,
+        ),
       ),
       (r) => emit(
         state.copyWith(
-          getNewsStatus: GetNewsCompletedStatus(r),
+          getNewsStatus: GetNewsStatus.completed,
+          getNewsEntity: r,
           selectedFilter: event.filterQuery,
         ),
       ),
     );
   }
 }
+

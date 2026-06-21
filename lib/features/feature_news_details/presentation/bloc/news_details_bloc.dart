@@ -9,13 +9,13 @@ class NewsDetailsBloc extends Bloc<NewsDetailsEvent, NewsDetailsState> {
   final ShareNewsUseCase shareNewsUseCase;
 
   NewsDetailsBloc({required this.shareNewsUseCase})
-      : super(NewsDetailsState(shareStatus: ShareInitialStatus())) {
+      : super(const NewsDetailsState(shareStatus: ShareStatus.initial)) {
     on<ShareArticleEvent>(_onShareArticle);
   }
 
   Future<void> _onShareArticle(
       ShareArticleEvent event, Emitter<NewsDetailsState> emit) async {
-    emit(state.copyWith(shareStatus: ShareLoadingStatus()));
+    emit(state.copyWith(shareStatus: ShareStatus.loading));
 
     final result = await shareNewsUseCase(
       ShareNewsParams(url: event.url, title: event.title),
@@ -23,9 +23,12 @@ class NewsDetailsBloc extends Bloc<NewsDetailsEvent, NewsDetailsState> {
 
     result.fold(
       (failure) => emit(
-        state.copyWith(shareStatus: ShareErrorStatus(failure.message)),
+        state.copyWith(
+          shareStatus: ShareStatus.error,
+          errorMessage: failure.message,
+        ),
       ),
-      (_) => emit(state.copyWith(shareStatus: ShareSuccessStatus())),
+      (_) => emit(state.copyWith(shareStatus: ShareStatus.success)),
     );
   }
 }
