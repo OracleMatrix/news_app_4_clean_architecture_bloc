@@ -20,7 +20,12 @@ Widget buildSearchField(
       controller: queryController,
       onSubmitted: (value) {
         if (value.isNotEmpty) {
-          BlocProvider.of<HomeBloc>(context).add(LoadNewsEvent(value));
+          BlocProvider.of<HomeBloc>(context).add(
+            LoadNewsEvent(
+              query: value,
+              filterNewsStatus: context.read<HomeBloc>().state.selectedFilter,
+            ),
+          );
         }
       },
       decoration: InputDecoration(

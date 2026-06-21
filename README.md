@@ -16,7 +16,7 @@ A professional news application built with Flutter, demonstrating industry-stand
 ## Features
 
 ### News Module (`feature_home`)
-- **Live News Search**: Query news articles based on keywords.
+- **Live News Search & Filtering**: Query news articles based on keywords, categories (technology, business, sports, etc.), and sorting criteria (popularity, publishedAt, relevancy).
 - **Dynamic News Feed**: Display headlines with images, descriptions, and source information.
 - **Graceful Error Handling**: Specialized UI states for network issues and server errors.
 
@@ -50,7 +50,7 @@ The project is divided into three main layers, following the Clean Architecture 
 ### 1. Domain Layer
 The core of the application, containing business logic and high-level abstractions. It is independent of any other layer.
 - **Entities**: Simple POJs using `Equatable` (e.g., `GetNewsEntity`, `NewsDetailEntity`).
-- **UseCases**: Specific business actions (e.g., `GetNewsUseCase`, `ShareNewsUseCase`).
+- **UseCases**: Specific business actions (e.g., `GetNewsByFilterUsecase`, `ShareNewsUseCase`).
 - **Repositories**: Abstract contracts defining the interface for data operations.
 
 ### 2. Data Layer
@@ -129,7 +129,7 @@ Future<void> setup() async {
   // Home
   di.registerSingleton<GetNewsRequest>(GetNewsRequest(dio: Dio()));
   di.registerSingleton<GetNewsRepository>(GetNewsRepositoryImpl(getNewsRequest: di()));
-  di.registerFactory<HomeBloc>(() => HomeBloc(getNewsUseCase: di()));
+  di.registerFactory<HomeBloc>(() => HomeBloc(getNewsByFilterUsecase: di()));
 
   // News Details
   di.registerSingleton<NewsDetailsRepository>(NewsDetailsRepositoryImpl());

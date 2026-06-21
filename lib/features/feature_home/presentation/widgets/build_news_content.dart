@@ -37,9 +37,10 @@ Widget buildNewsContent(TextEditingController queryController) {
                   onPressed: () {
                     BlocProvider.of<HomeBloc>(context).add(
                       LoadNewsEvent(
-                        queryController.text.isEmpty
+                        query: queryController.text.isEmpty
                             ? 'technology'
                             : queryController.text,
+                        filterNewsStatus: state.selectedFilter,
                       ),
                     );
                   },

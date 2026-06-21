@@ -18,7 +18,12 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     // Load default news on start
-    BlocProvider.of<HomeBloc>(context).add(LoadNewsEvent('technology'));
+    BlocProvider.of<HomeBloc>(context).add(
+      LoadNewsEvent(
+        query: 'technology',
+        filterNewsStatus: context.read<HomeBloc>().state.selectedFilter,
+      ),
+    );
   }
 
   @override

@@ -15,4 +15,18 @@ class GetNewsRequest {
       queryParameters: {'q': query, 'apikey': apiKey},
     );
   }
+
+  Future<Response> sendGetNewsByFilterRequest({
+    required String filterQuery,
+    required String searchQuery,
+  }) async {
+    return await dio.get(
+      '$baseUrl/everything',
+      queryParameters: {
+        'q': searchQuery,
+        'sortBy': filterQuery,
+        'apikey': apiKey,
+      },
+    );
+  }
 }

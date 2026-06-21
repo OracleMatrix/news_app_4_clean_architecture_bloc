@@ -4,4 +4,8 @@ import 'package:news_app_4_clean_architecture_bloc/features/feature_home/domain/
 
 abstract class GetNewsRepository {
   Future<Either<Failure, GetNewsEntity>> fetchNews(String query);
+  Future<Either<Failure, GetNewsEntity>> getNewsByFilter({
+    required String filterQuery,
+    required String searchQuery,
+  });
 }

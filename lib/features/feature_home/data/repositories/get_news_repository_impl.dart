@@ -29,4 +29,29 @@ class GetNewsRepositoryImpl implements GetNewsRepository {
       return Left(UnknownFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, GetNewsEntity>> getNewsByFilter({
+    required String filterQuery,
+    required String searchQuery,
+  }) async {
+    try {
+      final Response response = await getNewsRequest.sendGetNewsByFilterRequest(
+        filterQuery: filterQuery,
+        searchQuery: searchQuery,
+      );
+      if (response.statusCode == 200) {
+        final GetNewsEntity getNewsEntity = GetNewsModel.fromJson(
+          response.data,
+        );
+        return Right(getNewsEntity);
+      } else {
+        return Left(ServerFailure(response.data['message'] ?? 'Server error'));
+      }
+    } on DioException catch (e) {
+      return Left(NetworkFailure(e.type.name));
+    } catch (e) {
+      return Left(UnknownFailure(e.toString()));
+    }
+  }
 }
