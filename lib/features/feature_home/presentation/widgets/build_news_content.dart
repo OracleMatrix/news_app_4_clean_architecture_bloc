@@ -5,7 +5,17 @@ import 'package:news_app_4_clean_architecture_bloc/features/feature_home/present
 import 'package:news_app_4_clean_architecture_bloc/features/feature_home/presentation/widgets/news_card.dart';
 
 Widget buildNewsContent(TextEditingController queryController) {
-  return BlocBuilder<HomeBloc, HomeState>(
+  return BlocConsumer<HomeBloc, HomeState>(
+    listener: (context, state) {
+      if (state.getNewsStatus == GetNewsStatus.error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(state.errorMessage ?? 'Failed to load news'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    },
     builder: (context, state) {
       if (state.getNewsStatus == GetNewsStatus.loading) {
         return SliverFillRemaining(
@@ -27,7 +37,7 @@ Widget buildNewsContent(TextEditingController queryController) {
                 const Icon(Icons.error_outline, size: 60, color: Colors.red),
                 const SizedBox(height: 16),
                 Text(
-                  state.errorMessage ?? '',
+                  'Failed to load news',
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 16),
                 ),

@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:news_app_4_clean_architecture_bloc/core/error/api_error_handling.dart';
 import 'package:news_app_4_clean_architecture_bloc/core/error/failure.dart';
 import 'package:news_app_4_clean_architecture_bloc/features/feature_home/data/data_source/get_news_request.dart';
 import 'package:news_app_4_clean_architecture_bloc/features/feature_home/data/models/get_news_model.dart';
@@ -46,12 +47,12 @@ class GetNewsRepositoryImpl implements GetNewsRepository {
         );
         return Right(getNewsEntity);
       } else {
-        return Left(ServerFailure(response.data['message'] ?? 'Server error'));
+        return Left(ServerFailure(getDioErrorMessage(response.data)));
       }
     } on DioException catch (e) {
-      return Left(NetworkFailure(e.type.name));
+      return Left(NetworkFailure(getDioErrorMessage(e)));
     } catch (e) {
-      return Left(UnknownFailure(e.toString()));
+      return Left(UnknownFailure('Unknown error'));
     }
   }
 }

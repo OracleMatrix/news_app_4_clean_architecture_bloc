@@ -53,6 +53,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ChangeCategoryEvent event,
     Emitter<HomeState> emit,
   ) async {
+    if (state.selectedCategory == event.category) return;
     emit(
       state.copyWith(
         getNewsStatus: GetNewsStatus.loading,
@@ -87,6 +88,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     FilterNewsEvent event,
     Emitter<HomeState> emit,
   ) async {
+    if (state.selectedFilter == event.filterQuery) return;
     emit(state.copyWith(getNewsStatus: GetNewsStatus.loading));
 
     final result = await getNewsByFilterUsecase(
@@ -113,4 +115,3 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
   }
 }
-
